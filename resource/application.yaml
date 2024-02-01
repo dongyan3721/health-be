@@ -1,0 +1,17 @@
+database:
+  connections:
+    default:
+      engine: tortoise.backends.mysql
+#      engine: tortoise.backends.asyncpg #PGSQL的配置
+      credentials:
+        host: 47.101.34.15
+        port: '3306'
+        user: root
+        password: 9G%ZN##Vu8^T6Pn
+        database: health
+        minsize: 1
+        maxsize: 5
+        charset: utf8mb4
+        echo: True
+  use_tz: False
+  timezone: Asia/Shanghai
