@@ -1,8 +1,9 @@
+# 本文档推荐时不时格式化一下
 database:
   connections:
     default:
       engine: tortoise.backends.mysql
-#      engine: tortoise.backends.asyncpg #PGSQL的配置
+      #      engine: tortoise.backends.asyncpg #PGSQL的配置
       credentials:
         host: 47.101.34.15
         port: '3306'
@@ -15,3 +16,27 @@ database:
         echo: True
   use_tz: False
   timezone: Asia/Shanghai
+keys:
+  public: |
+            -----BEGIN RSA PUBLIC KEY-----
+            MIGJAoGBAJE3qTAQwNX0eocA2AwuUHJ3yt1FVDkk97d7usG1XPS42onf2vOsEEzx
+            NJK8mT+XfAD3rKORBkxaYuuwh5ItNEM5m9i5Fa+uPI7IfS8QJUgQdVrViGif3O/J
+            1IYfdK90Y/JRZYhFLI8B56TRJs2bvOPXZtLIcKLQxfJZPqpLJQ3fAgMBAAE=
+            -----END RSA PUBLIC KEY-----
+  private: |
+            -----BEGIN RSA PRIVATE KEY-----
+            MIICXwIBAAKBgQCRN6kwEMDV9HqHANgMLlByd8rdRVQ5JPe3e7rBtVz0uNqJ39rz
+            rBBM8TSSvJk/l3wA96yjkQZMWmLrsIeSLTRDOZvYuRWvrjyOyH0vECVIEHVa1Yho
+            n9zvydSGH3SvdGPyUWWIRSyPAeek0SbNm7zj12bSyHCi0MXyWT6qSyUN3wIDAQAB
+            AoGAFE5ALiRpkoFZEL+hdjKTtS3jBAXJvSPaL6Hxf1yo3t9qT5UpvKD2touT2mDc
+            3POFt2zqiwSgaNTKuEI63Jo5JzG/w9FRzwRpVs0eXIeeM9t+9YwxOdCHDIRFYnW9
+            ugbhdX7076UNm8GGMfOtmMvuN/g8C0a+gcQAjueIigzo+GECRQCeqUzOX73iTIRQ
+            nIQ857in/VRpXCGVGuxYhitzLtStAErS1/8Vbn+Pvzyw8v1FGymQWDOPKHdN8vN7
+            KgjczccOFyFAcwI9AOpO6pm5gWtsbHfTmDOPyA2JSoARWj927N/lMrNoGtAbxyi4
+            pii9hYGHMa9v/dMmcjZogMsVGGOQbgk95QJESMTJb1XGF0aU4QwIMo7syE+OKYyR
+            8nsYrzlKMFfoPziFGNLsMX4uj1VclqO7ubhNheCONTiQD3ZAadrLmcnfY/0DyTUC
+            PE+Kism01+KH5Cqpgjm+zcMKoGfpfCGfVbqMLDILXU7YnzuLs5yQ+gmGw68y7ZAI
+            tS0TPOW0O5tRJImuoQJEYyj+HjM7wbUJK9nby+NiLmtdqgv5lAiBRyFcv1aX6Z4g
+            vsld+y3YWKrt3FVG17DB/M1LnG7ArbNlviZioCBCTfNjD3Q=
+            -----END RSA PRIVATE KEY-----
+  rsa: True

@@ -1,7 +1,7 @@
 @echo off
 setlocal enabledelayedexpansion
 
-set "file=%cd%\app\config\ApplicationProperties.py"
+set "file=%cd%\app\framework\config\ApplicationProperties.py"
 set "property_file=%cd%\resource\application.yaml"
 set "rep=%property_file:\=/%"
 set "replacement=APPLICATION_PROPERTIES = YamlReader('%rep%').original_data"

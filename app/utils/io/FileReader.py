@@ -38,7 +38,7 @@ class JsonReader:
 class YamlReader:
     def __init__(self, file_path):
         self._file_path = file_path
-        print_absolute_path(file_path)
+        # print_absolute_path(file_path)
         encoding = 'UTF-8'
         with open(self._file_path, 'rb') as file:
             rawdata = file.read()
