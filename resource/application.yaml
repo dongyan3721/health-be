@@ -40,3 +40,10 @@ keys:
             vsld+y3YWKrt3FVG17DB/M1LnG7ArbNlviZioCBCTfNjD3Q=
             -----END RSA PRIVATE KEY-----
   rsa: True
+jwt:
+  sign: usst-health
+  algorithm: HS256
+  expired: 30
+mongo:
+  user: mongo-dyadmin
+  password: 25MTLY2@$ZjbvT@

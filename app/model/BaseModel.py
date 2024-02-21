@@ -5,6 +5,7 @@
 @official https://tortoise-orm.readthedocs.io/en/latest/index.html
 """
 import datetime
+import uuid
 
 from tortoise.models import Model
 from CustomizedTableFields import *
@@ -13,6 +14,7 @@ from tortoise import fields
 
 
 class BaseModel(Model):
+    del_flag = fields.CharField(max_length=1, description='删除标记0存在1删除', default='0')
     create_by = fields.CharField(max_length=64, description='创建人')
     create_time = fields.DatetimeField(default=datetime.datetime.now(), description='创建时间')
     modify_by = fields.CharField(max_length=64, description='修改人')
@@ -30,6 +32,19 @@ class SnowFlakeIDModel(BaseModel):
     @classmethod
     async def create(cls, **kwargs):
         kwargs["id"] = await SnowflakeIDGenerator(cls).generate_id()
+        return await super().create(**kwargs)
+
+    class Meta:
+        abstract = True
+
+
+class UUIDModel(BaseModel):
+    # 这里的ID要用自定义算法生成，generated为False
+    id = fields.CharField(max_length=36, description='UUID', pk=True, generated=False)
+
+    @classmethod
+    async def create(cls, **kwargs):
+        kwargs["id"] = uuid.uuid1()
         return await super().create(**kwargs)
 
     class Meta:
