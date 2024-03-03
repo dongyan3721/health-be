@@ -3,7 +3,7 @@
 @description 通用属性-消息传输
 @timeSnapshot 2024/2/1-22:07:57
 """
-from framework.common.HttpStatus import HttpStatus
+from framework.net.HttpStatus import HttpStatus
 
 
 class AjaxResult:

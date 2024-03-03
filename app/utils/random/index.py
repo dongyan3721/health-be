@@ -8,9 +8,9 @@ import random
 import string
 
 
-def generate_random_string(length):
+def generate_random_string(length) -> str:
     # 从字母和数字中生成随机字符串
     characters = string.ascii_letters + string.digits
     # 使用random模块生成指定长度的随机字符串
-    random_string = ''.join(random.choice(characters) for i in range(length))
+    random_string = ''.join(random.choice(characters) for _ in range(length))
     return random_string

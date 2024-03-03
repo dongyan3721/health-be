@@ -5,7 +5,7 @@
 """
 from BaseModel import BaseModel, SnowFlakeIDModel, UUIDModel
 from tortoise import fields
-from utils.random.dongyan import generate_random_string
+from utils.random.index import generate_random_string
 
 
 # 字典表，一一对应
@@ -53,6 +53,8 @@ class Users(SnowFlakeIDModel):
     find_user_bind_physic: fields.ReverseRelation["UserPhysical"]
     # 用户病史反向查找
     find_user_bind_medicine_history: fields.ReverseRelation["UserMedicineHistory"]
+    # 用户上传摄入量反向查找
+    find_user_bind_uploaded_intake: fields.ReverseRelation["UserUploadedInTake"]
 
     class Meta:
         table = "business_user"
@@ -159,7 +161,20 @@ class StaticRecommendedNutritionInTake(UUIDModel):
     metric = fields.CharField(max_length=10, null=False, description='计量单位')
 
     class Meta:
-        table = 'static_recommended_nutrition_in_take'
+        table = 'business_static_recommended_nutrition_in_take'
+
+
+# 用户上传的摄入表
+class UserUploadedInTake(SnowFlakeIDModel):
+    calorie = fields.DecimalField(max_digits=10, decimal_places=2, null=False, description='摄入热量，单位cal')
+    uploaded_image = fields.CharField(max_length=1024, null=False, description='用户上传的食物图片')
+    recognized_object = fields.CharField(max_length=512, null=False, description='识别到的照片的内容', default='')
+    upload_time = fields.DatetimeField(auto_now=True, description='上传时间')
+
+    user_id = fields.ForeignKeyField("Models.Users", related_name="find_user_bind_uploaded_intake")
+
+    class Meta:
+        table = 'business_user_uploaded_in_take'
 
 
 """
