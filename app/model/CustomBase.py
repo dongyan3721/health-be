@@ -4,7 +4,6 @@
 @timeSnapshot 2024/1/29-19:56:16
 @official https://tortoise-orm.readthedocs.io/en/latest/index.html
 """
-import datetime
 import uuid
 
 from tortoise.models import Model
@@ -15,11 +14,11 @@ from tortoise import fields
 
 class BaseModel(Model):
     del_flag = fields.CharField(max_length=1, description='删除标记0存在1删除', default='0')
-    create_by = fields.CharField(max_length=64, description='创建人')
-    create_time = fields.DatetimeField(default=datetime.datetime.now(), description='创建时间')
-    modify_by = fields.CharField(max_length=64, description='修改人')
-    modify_time = fields.DatetimeField(description='修改时间')
-    remark = fields.CharField(max_length=500, description='备注')
+    create_by = fields.CharField(max_length=64, description='创建人', null=True)
+    create_time = fields.DatetimeField(auto_now=True, null=True, description='创建时间')
+    modify_by = fields.CharField(max_length=64, description='修改人', null=True)
+    modify_time = fields.DatetimeField(description='修改时间', null=True)
+    remark = fields.CharField(max_length=500, description='备注', null=True)
 
     class Meta:
         abstract = True
