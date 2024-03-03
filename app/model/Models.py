@@ -5,6 +5,7 @@
 """
 from BaseModel import BaseModel, SnowFlakeIDModel, UUIDModel
 from tortoise import fields
+from utils.random.dongyan import generate_random_string
 
 
 # 字典表，一一对应
@@ -15,15 +16,24 @@ class KeyValueData(BaseModel):
     key = fields.CharField(max_length=2, description='键，数字', null=False)
     value = fields.CharField(max_length=64, description='值，数字代表的含义', null=False)
 
+    class Meta:
+        table = "business_kv"
+
 
 # 用户标签表
-class Tags(SnowFlakeIDModel):
+class UserTags(SnowFlakeIDModel):
     tag_name = fields.CharField(max_length=64, description='用户标签', null=False, default='请填入')
+
+    # 反向查找该标签被哪些用户持有
+    find_tag_belong_user: fields.ReverseRelation["Users"]
+
+    class Meta:
+        table = "business_user_tags"
 
 
 # 用户表
 class Users(SnowFlakeIDModel):
-    username = fields.CharField(null=False, max_length=64, description="用户名")
+    username = fields.CharField(null=False, max_length=64, description="用户名", default="用户" + generate_random_string(4))
     user_type = fields.CharField(null=False, max_length=1, description='0表示普通用户, 1表示管理员', default='0')
     phone = fields.CharField(null=False, max_length=14, description='注册手机号', default='')
     password = fields.CharField(null=False, max_length=200, description='密码，经过Base64加密')
@@ -37,7 +47,18 @@ class Users(SnowFlakeIDModel):
     ip_region = fields.CharField(max_length=256, null=False, default='未知', description='ip归属地')
     urgent_contract = fields.CharField(null=False, max_length=14, description='紧急联系人手机号', default='')
 
+    tags = fields.ManyToManyField("Models.UserTags", related_name="find_tag_belong_user")
 
+    # 用户生理信息反向查找
+    find_user_bind_physic: fields.ReverseRelation["UserPhysical"]
+    # 用户病史反向查找
+    find_user_bind_medicine_history: fields.ReverseRelation["UserMedicineHistory"]
+
+    class Meta:
+        table = "business_user"
+
+
+# 用户生理信息表
 class UserPhysical(SnowFlakeIDModel):
     rel_name = fields.CharField(max_length=256, null=False, description='真实姓名')
     gender = fields.CharField(null=False, description='用户性别0男1女2未知', default='0', max_length=1)
@@ -48,24 +69,97 @@ class UserPhysical(SnowFlakeIDModel):
     height = fields.DecimalField(max_digits=6, decimal_places=2, description='身高/cm')
     blood_type = fields.CharField(max_length=1, description='血型0A1B2AB3O')
 
-    user_id = fields.ForeignKeyField('Models.Users', related_name='find_physic_bind_user')
+    user_id = fields.ForeignKeyField('Models.Users', related_name='find_user_bind_physic')
+
+    class Meta:
+        table = "business_user_physical"
 
 
-class UserPhysicalExamination(SnowFlakeIDModel):
-    pass
-
-
+# 用户用药史表
 class UserMedicineHistory(SnowFlakeIDModel):
     illness_name = fields.CharField(max_length=256, null=False, description='病名')
     begin_time = fields.DateField(null=False, description='生病开始时间')
-    duration = fields.CharField(max_length=1, null=False, description='持续时间0一个月内1一到三个月2三至半年4半年至一年5一年至三年6三年以上')
+    duration = fields.CharField(max_length=1, null=True, description='持续时间0一个月内1一到三个月2三至半年4半年至一年5一年至三年6三年以上')
+    medicine = fields.CharField(max_length=256, null=True, description='用药情况')
 
-    user_id = fields.ForeignKeyField('Models.Users', related_name='find_medicine_history_bind_user')
+    user_id = fields.ForeignKeyField('Models.Users', related_name='find_user_bind_medicine_history')
+
+    class Meta:
+        table = "business_user_medicine_history"
 
 
+# 医院特色标签表
+class HospitalTags(UUIDModel):
+    tag_name = fields.CharField(max_length=64, description='医院标签', null=False, default='请填入')
+
+    # 反向查找哪些医院使用了本标签
+    find_hospital_tag_bind_hospital: fields.ReverseRelation["Hospital"]
+
+    class Meta:
+        table = "business_hospital_tags"
+
+
+# 医院表
 class Hospital(UUIDModel):
     hospital_name = fields.CharField(max_length=256, description='医院名称', null=False)
     address = fields.CharField(max_length=512, description='医院地址', null=False)
+    herd_towards_enthusiasm = fields.DecimalField(max_digits=8, decimal_places=2, description='大众对医院的热度', null=True)
+
+    # 医院特色标签
+    proficiency_tags = fields.ManyToManyField("Models.HospitalTags", related_name="find_hospital_tag_bind_hospital")
+
+    # 反向查找本医院有哪些医生
+    find_hospital_raise_doctors: fields.ReverseRelation["HospitalDoctors"]
+
+    class Meta:
+        table = "business_hospital"
+
+
+# 医生标签表
+class HospitalDoctorProficiencyTags(UUIDModel):
+    tag_name = fields.CharField(max_length=64, description='医生专长标签', null=False, default='请填入')
+
+    # 反向查找哪些医生使用了本标签
+    find_doctor_tags_bind_doctors: fields.ReverseRelation["HospitalDoctors"]
+
+    class Meta:
+        table = "business_hospital_doctor_proficiency_tags"
+
+
+# 医生表
+class HospitalDoctors(UUIDModel):
+    doctor_name = fields.CharField(max_length=24, description='医师姓名', null=False)
+    contact = fields.CharField(max_length=16, description='联系方式(手机)', null=False)
+
+    # 多对多-医生的主治方向标签
+    tag_name = fields.ManyToManyField("Models.HospitalDoctorProficiencyTags",
+                                      related_name="find_doctor_tags_bind_doctors")
+    # 外键-医生归属的医院
+    hospital_belong = fields.ForeignKeyField("Models.Hospital", related_name="find_hospital_raise_doctors")
+
+    class Meta:
+        table = "business_hospital_doctors"
+
+
+# 静态表-体检数据正常值
+# class StaticPhysicalExaminationNormValue(UUIDModel):
+#     pass
+
+
+# 用户体检数据表
+# class UserPhysicalExamination(SnowFlakeIDModel):
+#     pass
+
+
+# 静态表-膳食指南
+class StaticRecommendedNutritionInTake(UUIDModel):
+    in_take_case_name = fields.CharField(max_length=32, null=False, description='摄入项目')
+    recommended_lower_limit = fields.DecimalField(max_digits=8, decimal_places=2, description='建议摄入最小值')
+    recommended_upper_limit = fields.DecimalField(max_digits=8, decimal_places=2, description='建议摄入最大值')
+    metric = fields.CharField(max_length=10, null=False, description='计量单位')
+
+    class Meta:
+        table = 'static_recommended_nutrition_in_take'
 
 
 """
