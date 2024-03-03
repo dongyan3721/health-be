@@ -6,7 +6,7 @@ database:
       #      engine: tortoise.backends.asyncpg #PGSQL的配置
       credentials:
         host: 47.101.34.15
-        port: '3306'
+        port: 3306
         user: root
         password: 9G%ZN##Vu8^T6Pn
         database: health
@@ -14,6 +14,10 @@ database:
         maxsize: 5
         charset: utf8mb4
         echo: True
+  apps:
+    models:
+      models: [app.model.models, aerich.models]
+      default_connection: default
   use_tz: False
   timezone: Asia/Shanghai
 keys:

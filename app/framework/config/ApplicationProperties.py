@@ -5,6 +5,7 @@
 @warning 禁止在本文件内格式化代码
 """
 
-from utils.io.FileReader import YamlReader
+from app.utils.io.FileReader import YamlReader
 
 APPLICATION_PROPERTIES = YamlReader('C:/Users/29145/Desktop/Programming/health-be/resource/application.yaml').original_data
+

@@ -4,7 +4,7 @@
 @timeSnapshot 2024/2/2-00:32:39
 """
 import rsa
-from framework.config.ApplicationProperties import APPLICATION_PROPERTIES
+from app.framework.config.ApplicationProperties import APPLICATION_PROPERTIES
 import base64
 
 

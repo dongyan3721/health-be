@@ -8,8 +8,8 @@ import datetime
 import uuid
 
 from tortoise.models import Model
-from CustomizedTableFields import *
-from utils.table.SnowflakeGenerator import SnowflakeIDGenerator
+from app.model.CustomizedTableFields import *
+from app.utils.table.SnowflakeGenerator import SnowflakeIDGenerator
 from tortoise import fields
 
 

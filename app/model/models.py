@@ -3,9 +3,10 @@
 @description 数据库表映射类-全部
 @timeSnapshot 2024/1/29-19:46:13
 """
-from BaseModel import BaseModel, SnowFlakeIDModel, UUIDModel
+# from model.CustomBase import BaseModel, SnowFlakeIDModel, UUIDModel
 from tortoise import fields
-from utils.random.index import generate_random_string
+from app.utils.random.index import generate_random_string
+from app.model.CustomBase import SnowFlakeIDModel, BaseModel, UUIDModel
 
 
 # 字典表，一一对应
@@ -17,7 +18,7 @@ class KeyValueData(BaseModel):
     value = fields.CharField(max_length=64, description='值，数字代表的含义', null=False)
 
     class Meta:
-        table = "business_kv"
+        table = "b_kv"
 
 
 # 用户标签表
@@ -28,7 +29,7 @@ class UserTags(SnowFlakeIDModel):
     find_tag_belong_user: fields.ReverseRelation["Users"]
 
     class Meta:
-        table = "business_user_tags"
+        table = "b_user_tags"
 
 
 # 用户表
@@ -47,7 +48,7 @@ class Users(SnowFlakeIDModel):
     ip_region = fields.CharField(max_length=256, null=False, default='未知', description='ip归属地')
     urgent_contract = fields.CharField(null=False, max_length=14, description='紧急联系人手机号', default='')
 
-    tags = fields.ManyToManyField("Models.UserTags", related_name="find_tag_belong_user")
+    tags = fields.ManyToManyField("models.UserTags", related_name="find_tag_belong_user")
 
     # 用户生理信息反向查找
     find_user_bind_physic: fields.ReverseRelation["UserPhysical"]
@@ -57,7 +58,7 @@ class Users(SnowFlakeIDModel):
     find_user_bind_uploaded_intake: fields.ReverseRelation["UserUploadedInTake"]
 
     class Meta:
-        table = "business_user"
+        table = "b_user"
 
 
 # 用户生理信息表
@@ -71,10 +72,10 @@ class UserPhysical(SnowFlakeIDModel):
     height = fields.DecimalField(max_digits=6, decimal_places=2, description='身高/cm')
     blood_type = fields.CharField(max_length=1, description='血型0A1B2AB3O')
 
-    user_id = fields.ForeignKeyField('Models.Users', related_name='find_user_bind_physic')
+    user_id = fields.ForeignKeyField('models.Users', related_name='find_user_bind_physic')
 
     class Meta:
-        table = "business_user_physical"
+        table = "b_user_physical"
 
 
 # 用户用药史表
@@ -84,10 +85,10 @@ class UserMedicineHistory(SnowFlakeIDModel):
     duration = fields.CharField(max_length=1, null=True, description='持续时间0一个月内1一到三个月2三至半年4半年至一年5一年至三年6三年以上')
     medicine = fields.CharField(max_length=256, null=True, description='用药情况')
 
-    user_id = fields.ForeignKeyField('Models.Users', related_name='find_user_bind_medicine_history')
+    user_id = fields.ForeignKeyField('models.Users', related_name='find_user_bind_medicine_history')
 
     class Meta:
-        table = "business_user_medicine_history"
+        table = "b_user_medicine_history"
 
 
 # 医院特色标签表
@@ -98,7 +99,7 @@ class HospitalTags(UUIDModel):
     find_hospital_tag_bind_hospital: fields.ReverseRelation["Hospital"]
 
     class Meta:
-        table = "business_hospital_tags"
+        table = "b_hospital_tags"
 
 
 # 医院表
@@ -108,13 +109,13 @@ class Hospital(UUIDModel):
     herd_towards_enthusiasm = fields.DecimalField(max_digits=8, decimal_places=2, description='大众对医院的热度', null=True)
 
     # 医院特色标签
-    proficiency_tags = fields.ManyToManyField("Models.HospitalTags", related_name="find_hospital_tag_bind_hospital")
+    proficiency_tags = fields.ManyToManyField("models.HospitalTags", related_name="find_hospital_tag_bind_hospital")
 
     # 反向查找本医院有哪些医生
     find_hospital_raise_doctors: fields.ReverseRelation["HospitalDoctors"]
 
     class Meta:
-        table = "business_hospital"
+        table = "b_hospital"
 
 
 # 医生标签表
@@ -125,7 +126,7 @@ class HospitalDoctorProficiencyTags(UUIDModel):
     find_doctor_tags_bind_doctors: fields.ReverseRelation["HospitalDoctors"]
 
     class Meta:
-        table = "business_hospital_doctor_proficiency_tags"
+        table = "b_hospital_doctor_tags"
 
 
 # 医生表
@@ -134,13 +135,13 @@ class HospitalDoctors(UUIDModel):
     contact = fields.CharField(max_length=16, description='联系方式(手机)', null=False)
 
     # 多对多-医生的主治方向标签
-    tag_name = fields.ManyToManyField("Models.HospitalDoctorProficiencyTags",
+    tag_name = fields.ManyToManyField("models.HospitalDoctorProficiencyTags",
                                       related_name="find_doctor_tags_bind_doctors")
     # 外键-医生归属的医院
-    hospital_belong = fields.ForeignKeyField("Models.Hospital", related_name="find_hospital_raise_doctors")
+    hospital_belong = fields.ForeignKeyField("models.Hospital", related_name="find_hospital_raise_doctors")
 
     class Meta:
-        table = "business_hospital_doctors"
+        table = "b_hospital_doctors"
 
 
 # 静态表-体检数据正常值
@@ -161,7 +162,7 @@ class StaticRecommendedNutritionInTake(UUIDModel):
     metric = fields.CharField(max_length=10, null=False, description='计量单位')
 
     class Meta:
-        table = 'business_static_recommended_nutrition_in_take'
+        table = 'b_recommended_nutrition_in_take'
 
 
 # 用户上传的摄入表
@@ -171,10 +172,10 @@ class UserUploadedInTake(SnowFlakeIDModel):
     recognized_object = fields.CharField(max_length=512, null=False, description='识别到的照片的内容', default='')
     upload_time = fields.DatetimeField(auto_now=True, description='上传时间')
 
-    user_id = fields.ForeignKeyField("Models.Users", related_name="find_user_bind_uploaded_intake")
+    user_id = fields.ForeignKeyField("models.Users", related_name="find_user_bind_uploaded_intake")
 
     class Meta:
-        table = 'business_user_uploaded_in_take'
+        table = 'b_user_in_take'
 
 
 """
