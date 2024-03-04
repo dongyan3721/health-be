@@ -2,6 +2,11 @@ import uvicorn
 from app.framework.config.ApplicationProperties import APPLICATION_PROPERTIES
 from fastapi import FastAPI
 from tortoise.contrib.fastapi import register_tortoise
+from app.controller.KVController import kv
+
+
+
+
 
 app = FastAPI()
 
@@ -10,7 +15,7 @@ register_tortoise(
     config=APPLICATION_PROPERTIES["database"]
 )
 
-# print(APPLICATION_PROPERTIES)
+app.include_router(kv, prefix="/kv", tags=["键值对表"])
 
 
 if __name__ == '__main__':

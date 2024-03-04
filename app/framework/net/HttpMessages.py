@@ -3,7 +3,7 @@
 @description 通用属性-消息传输
 @timeSnapshot 2024/2/1-22:07:57
 """
-from framework.net.HttpStatus import HttpStatus
+from app.framework.net.HttpStatus import HttpStatus
 
 
 class AjaxResult:
@@ -16,8 +16,8 @@ class AjaxResult:
         return AjaxResult(HttpStatus.OK, "success")
 
     @staticmethod
-    def error():
-        return AjaxResult(HttpStatus.INTERNAL_SERVER_ERROR, "error")
+    def error(msg: str):
+        return AjaxResult(HttpStatus.INTERNAL_SERVER_ERROR, msg)
 
     @staticmethod
     def ok_extended(**kv):
@@ -31,3 +31,11 @@ class TableData(AjaxResult):
         super().__init__(code, msg)
         self.rows = rows
         self.total = total
+
+    @staticmethod
+    def success(rows: list, total: int):
+        return TableData(HttpStatus.OK, "success", rows, total)
+
+    @staticmethod
+    def error(msg):
+        return super().error(msg)
