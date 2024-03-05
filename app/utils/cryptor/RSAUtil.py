@@ -23,9 +23,9 @@ class RSAUtil:
     public_key: rsa.PublicKey = load_key_from_string(APPLICATION_PROPERTIES['keys']['public'], False)
 
     @classmethod
-    def encrypt(cls, text: str):
+    async def encrypt(cls, text: str):
         return base64.b64encode(rsa.encrypt(text.encode('utf-8'), cls.public_key)).decode('utf-8')
 
     @classmethod
-    def decrypt(cls, encrypted_message):
+    async def decrypt(cls, encrypted_message):
         return rsa.decrypt(base64.b64decode(encrypted_message), cls.private_key).decode('utf-8')

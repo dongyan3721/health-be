@@ -28,3 +28,18 @@ class HospitalEntity(BaseModel):
     proficiency_tags: List[str] = []
     # 传递过来的医院医生列表
     # find_hospital_raise_doctors: List[str] = []
+
+
+class UserEntity(BaseModel):
+    id: Optional[int] = None
+    username: str
+    user_type: Optional[str] = None
+    phone: str
+    avatar: Optional[str] = None
+    password: str
+    grade: Optional[int] = None
+    grade_accumulate: Optional[int] = None
+    self_description: Optional[str] = None
+    ip_region: Optional[str] = None
+    urgent_contact: Optional[str] = None
+    tags: List[int] = []
