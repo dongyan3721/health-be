@@ -3,9 +3,21 @@
 @description 
 @timeSnapshot 2024/2/1-21:57:39
 """
-import uuid
 
-import rsa
-import base64
+res = [
+    'KeyValueData',
+    'UserTags',
+    'Users',
+    'UserPhysical',
+    'UserMedicineHistory',
+    'HospitalTags',
+    'Hospital',
+    'HospitalDoctorProficiencyTags',
+    'HospitalDoctors',
+    'StaticRecommendedNutritionInTake',
+    'UserUploadedInTake'
+]
 
-print(uuid.uuid1())
+for name in res:
+    print(f"PydanticModel{name}: Type[PydanticModel] = pydantic_model_creator({name})")
+    print(f"PydanticQuerySet{name}: Type[PydanticListModel] = pydantic_queryset_creator({name})")

@@ -1,9 +1,9 @@
 """
 @author David Antilles
-@description 
+@description 供请求体中访问
 @timeSnapshot 2024/3/5-00:51:33
 """
-from typing import List
+from typing import List, Optional, Union
 
 from pydantic import BaseModel, field_validator
 
@@ -13,11 +13,18 @@ class KVEntity(BaseModel):
     # 事实上由label和key构成联合主键
     label: str
     key: int
-    value: str
+    # 删除时为可选参数
+    value: Optional[str] = None
 
     # 可选 courses: List[int] = []
 
-    @field_validator("key")
-    def validate_key(cls, value: str):
-        assert value.isalnum(), "键只允许为数字！"
-        return value
+
+class HospitalEntity(BaseModel):
+    id: Optional[str] = None
+    hospital_name: str
+    address: str
+    herd_towards_enthusiasm: Union[float, None] = None
+    # 传递过来的医院特色id列表
+    proficiency_tags: List[str] = []
+    # 传递过来的医院医生列表
+    # find_hospital_raise_doctors: List[str] = []

@@ -3,7 +3,7 @@ from app.framework.config.ApplicationProperties import APPLICATION_PROPERTIES
 from fastapi import FastAPI
 from tortoise.contrib.fastapi import register_tortoise
 from app.controller.KVController import kv
-
+from app.controller.HospitalController import hospital_route
 
 
 
@@ -16,6 +16,7 @@ register_tortoise(
 )
 
 app.include_router(kv, prefix="/kv", tags=["键值对表"])
+app.include_router(hospital_route, prefix="/hospital", tags=["医院相关"])
 
 
 if __name__ == '__main__':

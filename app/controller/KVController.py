@@ -34,3 +34,18 @@ async def insertIntoKVNewDict(kv_entity: KVEntity):
     return AjaxResult.error("键重复！")
 
 
+@kv.delete("/delete")
+async def deleteSeriesOfKV(kv_entity: KVEntity):
+    if await KeyValueData.filter(label=kv_entity.label, key=kv_entity.key).delete():
+        return AjaxResult.ok()
+    else:
+        return AjaxResult.error('要删除的值不存在')
+
+
+@kv.put("/modify")
+async def modifySeriesOfKV(kv_entity: KVEntity):
+    if await KeyValueData.filter(label=kv_entity.label, key=kv_entity.key).update(value=kv_entity.value):
+        return AjaxResult.ok()
+    else:
+        return AjaxResult.error('要修改的值不存在')
+
