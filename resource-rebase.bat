@@ -11,4 +11,4 @@ set "pattern=APP.*data"
 
 sed -i "s#%pattern%#%replacement%#g" "%file%"
 @echo done
-
+pause
