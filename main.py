@@ -37,11 +37,3 @@ app.include_router(user_router, prefix="/user", tags=['用户相关'])
 app.include_router(static_resource_access_controller, prefix='/static', tags=['静态资源读写相关'])
 
 
-if __name__ == '__main__':
-    uvicorn.run(
-        app='main:app',
-        host='127.0.0.1',
-        port=8080,
-        reload=True,
-        workers=1
-    )
