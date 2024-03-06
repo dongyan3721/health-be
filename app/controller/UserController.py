@@ -3,11 +3,15 @@
 @description 用户相关
 @timeSnapshot 2024/3/5-20:50:14
 """
-from fastapi import APIRouter
+import uuid
+
+from fastapi import APIRouter, UploadFile, File, Depends
 # from starlette.responses import JSONResponse # 支持自定义响应体和响应头
 from starlette.requests import Request
 
-from app.entity.entities import UserEntity
+from app.entity.form import UserModifyDependency
+from app.entity.raw import UserEntity
+from app.framework.config.FileConfig import getAvatarUploadPath, getFileExtension, calculateRelativeUrlPattern
 from app.framework.net.HttpMessages import AjaxResult
 from app.framework.net.HttpStatus import HttpStatus
 from app.model.models import Users, UserTags
@@ -59,7 +63,26 @@ async def loginUser(user_entity: UserEntity, request: Request):
             await Users.filter(phone=params['phone']).update(ip_region=ip_region)
             selected_user.pop('password')
             selected_user['ip_region'] = ip_region
+            # TODO 返回token
             return AjaxResult.ok_extended(data=selected_user)
         return AjaxResult(HttpStatus.FORBIDDEN, '账号或密码错误')
     return AjaxResult(HttpStatus.FORBIDDEN, '账号或密码错误')
 
+
+@user_router.put('/user/update')
+async def updateUser(avatar: UploadFile = File(None), user: UserModifyDependency = Depends(UserModifyDependency)):
+    values = user.model_dump(exclude_none=True)
+    if values.get('id') < 0:
+        return AjaxResult.error('修改失败，检查请求参数！')
+    if avatar:
+        full_storage_path = getAvatarUploadPath() + str(uuid.uuid1()) + getFileExtension(avatar.filename)
+        contents = await avatar.read()
+        with open(full_storage_path, "wb+") as f:
+            f.write(contents)
+        values['avatar'] = calculateRelativeUrlPattern(full_storage_path)
+    values.pop('id')
+    count = await Users.filter(id=user.id)
+    if len(count):
+        await Users.filter(id=user.id).update(**values)
+        return AjaxResult.ok()
+    return AjaxResult.error('修改失败，检查请求参数！')

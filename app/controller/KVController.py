@@ -7,7 +7,7 @@ from fastapi import APIRouter
 
 from app.framework.net.HttpMessages import TableData, AjaxResult
 from app.model.models import KeyValueData
-from app.entity.entities import KVEntity
+from app.entity.raw import KVEntity
 
 kv = APIRouter()
 

@@ -30,7 +30,7 @@
 from fastapi import APIRouter
 from tortoise.contrib.pydantic import pydantic_model_creator, pydantic_queryset_creator
 
-from app.entity.entities import *
+from app.entity.raw import *
 from app.framework.net.HttpMessages import TableData, AjaxResult
 from app.model.models import *
 

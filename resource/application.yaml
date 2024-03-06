@@ -51,5 +51,5 @@ jwt:
 mongo:
   user: mongo-dyadmin
   password: 25MTLY2@$ZjbvT@
-# 部署到服务器上时，切换到/data目录下
-file-upload: D:/health/upload
+# 部署到服务器上时，切换到/data目录下，系统提供的路径都是左开右闭
+file-upload: D:/health/upload/
