@@ -47,7 +47,7 @@ keys:
 jwt:
   sign: usst-health
   algorithm: HS256
-  expired: 30
+  expired: 120
 mongo:
   user: mongo-dyadmin
   password: 25MTLY2@$ZjbvT@
