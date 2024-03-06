@@ -7,8 +7,6 @@
 import httpx
 import ipaddress
 
-_client = httpx.AsyncClient(http2=True)
-
 
 def check_ip_address(ip_address):
     try:
@@ -34,7 +32,7 @@ async def get_ip_info_async(ip_address):
         return '开发者'
 
     url = f'http://ip-api.com/json/{ip_address}'
-    async with _client as client:
+    async with httpx.AsyncClient(http2=True) as client:
         try:
             response = await client.get(
                 url,

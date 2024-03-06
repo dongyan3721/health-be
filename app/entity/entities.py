@@ -32,7 +32,7 @@ class HospitalEntity(BaseModel):
 
 class UserEntity(BaseModel):
     id: Optional[int] = None
-    username: str
+    username: Optional[str] = None
     user_type: Optional[str] = None
     phone: str
     avatar: Optional[str] = None
