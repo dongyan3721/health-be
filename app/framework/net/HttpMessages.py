@@ -3,6 +3,8 @@
 @description 通用属性-消息传输
 @timeSnapshot 2024/2/1-22:07:57
 """
+from typing import Union, List
+
 from app.framework.net.HttpStatus import HttpStatus
 
 
@@ -33,7 +35,7 @@ class TableData(AjaxResult):
         self.total = total
 
     @staticmethod
-    def success(rows: list, total: int):
+    def success(rows: Union[List, str], total: int):
         return TableData(HttpStatus.OK, "success", rows, total)
 
     @staticmethod

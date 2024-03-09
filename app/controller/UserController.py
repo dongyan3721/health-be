@@ -7,15 +7,15 @@ import uuid
 
 from fastapi import APIRouter, File, Depends, UploadFile
 from starlette.requests import Request
-from tortoise.contrib.pydantic import pydantic_model_creator
+from tortoise.contrib.pydantic import pydantic_model_creator, pydantic_queryset_creator
 
-from app.entity.form import UserModifyDependency
+from app.entity.form import UserModifyDependency, UserIntakeDependency
 from app.entity.raw import UserEntity
 from app.framework.config.FileConfig import getAvatarUploadPath, getFileExtension, calculateRelativeUrlPattern, \
     generate_default_avatar
-from app.framework.net.HttpMessages import AjaxResult
+from app.framework.net.HttpMessages import AjaxResult, TableData
 from app.framework.net.HttpStatus import HttpStatus
-from app.model.models import Users, UserTags
+from app.model.models import Users, UserTags, UserUploadedInTake
 from app.utils.JwtUtils import JwtUtils
 from app.utils.cryptor.RSAUtil import RSAUtil
 from app.utils.ipUtils import get_ip_info_async
@@ -88,3 +88,31 @@ async def updateUser(avatar: UploadFile = File(None), user: UserModifyDependency
         await Users.filter(id=user.id).update(**values)
         return AjaxResult.ok()
     return AjaxResult.error('修改失败，检查请求参数！')
+
+
+# 用户饮食-新增
+@user_router.post('/user-intake/add')
+async def addUserDailyIntake(uploaded_image: UploadFile = File(None),
+                             user_intake: UserIntakeDependency = Depends(UserIntakeDependency)):
+    tangible_attribute = user_intake.model_dump()
+    if uploaded_image:
+        # 用PIL读取二进制文件并识别出这个图片里面有哪些吃的，热量大概多少
+        pass
+
+
+# 用户饮食-列表查
+@user_router.get('/user-intake/list/{user_id}')
+async def queryUserDailyIntakeList(user_id: str, skim: int = 0, limit: int = 10):
+    user_intake_queryset_instance = pydantic_queryset_creator(UserUploadedInTake, exclude=("user_id", ))
+    selected_intake = await user_intake_queryset_instance.from_queryset(UserUploadedInTake.filter(user_id=user_id).offset(skim*limit).limit(limit))
+    return TableData.success(selected_intake.model_dump(), len(selected_intake.model_dump()))
+
+
+# 用户饮食-单个查
+@user_router.get('/user-intake/{intake_id}')
+async def deleteUserDailyIntake(intake_id: int):
+    user_intake_model_instance = pydantic_model_creator(UserUploadedInTake, exclude=("user_id", ))
+    select_intake = await user_intake_model_instance.from_tortoise_orm(await UserUploadedInTake.filter(id=intake_id).first())
+    return AjaxResult.ok_extended(data=select_intake.model_dump(mode='json'))
+
+

@@ -3,6 +3,7 @@
 @description 传输实体的FormData版本
 @timeSnapshot 2024/3/6-14:18:27
 """
+import datetime
 from typing import Optional, List
 
 from fastapi import Form
@@ -36,3 +37,24 @@ class UserModifyDependency:
 
     def model_dump(self, exclude_none: bool = True):
         return {key: value for key, value in vars(self).items() if value} if exclude_none else {key: value for key, value in vars(self).items()}
+
+
+class UserIntakeDependency:
+    def __init__(
+            self,
+            user_id: str,
+            id: Optional[str] = Form(None),
+            calorie: Optional[float] = Form(None),
+            recognized_object: Optional[str] = Form(None),
+            upload_time: Optional[datetime.datetime] = Form(None),
+    ):
+        self.id = id
+        self.calorie = calorie
+        self.recognized_object = recognized_object
+        self.upload_time = upload_time
+        self.user_id = user_id
+
+    def model_dump(self, exclude_none: bool = True):
+        return {key: value for key, value in vars(self).items() if value} if exclude_none else {key: value for key, value in vars(self).items()}
+
+
