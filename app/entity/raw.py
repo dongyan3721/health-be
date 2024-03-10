@@ -3,6 +3,7 @@
 @description 供请求体中访问
 @timeSnapshot 2024/3/5-00:51:33
 """
+import datetime
 from typing import List, Optional, Union
 
 from pydantic import BaseModel, field_validator
@@ -43,3 +44,18 @@ class UserEntity(BaseModel):
     ip_region: Optional[str] = None
     urgent_contact: Optional[str] = None
     tags: List[int] = []
+
+
+class UserPasswordModifyEntity(BaseModel):
+    id: int
+    original_password: str
+    new_password: str
+
+
+class UserMedicineHistoryEntity(BaseModel):
+    illness_name: str
+    begin_time: datetime.datetime
+    duration: Optional[str] = None
+    medicine: Optional[str] = None
+    user_id: int
+

@@ -11,3 +11,5 @@ pip install pymongo==4.6.1
 pip install rsa==4.9
 pip install tortoise-orm==0.20.0
 pip install uvicorn==0.25.0
+pip install chardet==4.0.0
+pip install python-multipart==0.0.9
