@@ -42,7 +42,7 @@ class UserModifyDependency:
 class UserIntakeDependency:
     def __init__(
             self,
-            user_id: str,
+            user_id_id: str,
             id: Optional[str] = Form(None),
             calorie: Optional[float] = Form(None),
             recognized_object: Optional[str] = Form(None),
@@ -52,7 +52,7 @@ class UserIntakeDependency:
         self.calorie = calorie
         self.recognized_object = recognized_object
         self.upload_time = upload_time
-        self.user_id = user_id
+        self.user_id = user_id_id
 
     def model_dump(self, exclude_none: bool = True):
         return {key: value for key, value in vars(self).items() if value} if exclude_none else {key: value for key, value in vars(self).items()}

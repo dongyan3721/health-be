@@ -64,6 +64,7 @@ class SnowFlakeSmall:
         if worker_id > self.max_worker_id or worker_id < 0:
             raise ValueError(f"Invalid worker ID, should be in the range [0, {self.max_worker_id}]")
 
+    @property
     def next_id(self):
         curr_timestamp = self.timestamp_gen()
 
@@ -97,4 +98,4 @@ class SnowflakeIDGenerator:
 
     @staticmethod
     async def generate_id():
-        return SnowFlakeSmall(0xa).next_id()
+        return SnowFlakeSmall(0xa).next_id

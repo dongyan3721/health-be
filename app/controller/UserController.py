@@ -116,15 +116,17 @@ async def addUserDailyIntake(uploaded_image: UploadFile = File(None),
 
 
 # 用户饮食-列表查
-@user_router.get('/user-intake/list/{user_id}')
-async def queryUserDailyIntakeList(user_id: int, skip: int = 0, limit: int = 10):
+# filter的时候用model中定义的字段，update/create的时候用数据库中的字段
+@user_router.get('/user-intake/list/{user_id_id}')
+async def queryUserDailyIntakeList(user_id_id: int, skip: int = 0, limit: int = 10):
     user_intake_queryset_instance = pydantic_queryset_creator(UserUploadedInTake, exclude=("user_id",))
     selected_intake = await user_intake_queryset_instance.from_queryset(
-        UserUploadedInTake.filter(user_id=user_id).offset(skip * limit).limit(limit))
+        UserUploadedInTake.filter(user_id=user_id_id).offset(skip * limit).limit(limit))
     return TableData.success(selected_intake.model_dump(), len(selected_intake.model_dump()))
 
 
 # 用户饮食-单个查
+# filter的时候用model中定义的字段，update/create的时候用数据库中的字段
 @user_router.get('/user-intake/{intake_id}')
 async def queryUserDailyIntakeDetail(intake_id: int):
     user_intake_model_instance = pydantic_model_creator(UserUploadedInTake, exclude=("user_id",))
@@ -142,7 +144,7 @@ async def deleteUserIntake(intake_id: str):
         AjaxResult.error('要删除的记录不存在！')
 
 
-# 用户用药史-新增
+# 用户用药史-新增 // 测试完成
 @user_router.post('/user-medicine/add')
 async def addUserMedicineHistory(record: UserMedicineHistoryEntity):
     params = record.model_dump(exclude_unset=True)
@@ -150,10 +152,34 @@ async def addUserMedicineHistory(record: UserMedicineHistoryEntity):
     return AjaxResult.ok()
 
 
-# 用户用药史-列表查
-@user_router.get('/user-medicine/list/{user_id}')
-async def queryUserMedicineList(user_id: int, skip: int = 0, limit: int = 10):
-    user_medicine_queryset_instance = pydantic_queryset_creator(UserMedicineHistory)
+# 用户用药史-列表查 // 测试完成
+@user_router.get('/user-medicine/list/{user_id_id}')
+async def queryUserMedicineList(user_id_id: int, skip: int = 0, limit: int = 10):
+    user_medicine_queryset_instance = pydantic_queryset_creator(UserMedicineHistory, exclude=('user_id', ))
     medicine_history_list = await user_medicine_queryset_instance.from_queryset(
-        UserMedicineHistory.filter(user_id=user_id).offset(skip * limit).limit(limit))
+        UserMedicineHistory.filter(user_id=user_id_id).offset(skip * limit).limit(limit))
     return TableData.success(medicine_history_list.model_dump(), len(medicine_history_list.model_dump()))
+
+
+# 用户用药史-修改 // 测试完成
+# filter的时候用model中定义的字段，update/create的时候用数据库中的字段
+@user_router.put('/user-medicine/modify')
+async def modifyUserMedicine(medicine: UserMedicineHistoryEntity):
+    params = medicine.model_dump(exclude_none=True)
+    if not params.get('id'):
+        return AjaxResult.error('id不存在！')
+    if await UserMedicineHistory.filter(id=params.pop('id')).update(**params):
+        return AjaxResult.ok()
+    return AjaxResult.error('更新失败！')
+
+
+# 用户用药史-删除 // 测试完成
+@user_router.delete('/user-medicine/medicine_id')
+async def deleteUserMedicine(medicine_id: int):
+    if await UserMedicineHistory.filter(id=medicine_id).delete():
+        return AjaxResult.ok()
+    return AjaxResult.error('删除失败！')
+
+
+
+

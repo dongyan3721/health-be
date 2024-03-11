@@ -53,9 +53,10 @@ class UserPasswordModifyEntity(BaseModel):
 
 
 class UserMedicineHistoryEntity(BaseModel):
+    id: Optional[int] = None
     illness_name: str
     begin_time: datetime.datetime
     duration: Optional[str] = None
     medicine: Optional[str] = None
-    user_id: int
+    user_id_id: Optional[int] = None
 
