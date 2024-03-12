@@ -67,10 +67,10 @@ class UserPhysical(SnowFlakeIDModel):
     gender = fields.CharField(null=False, description='用户性别0男1女2未知', default='0', max_length=1)
     birthday = fields.DateField(null=False, description='出生年月日')
     identity_card = fields.CharField(max_length=20, description='身份证号', null=False)
-    address = fields.CharField(max_length=256, description='居住地')
-    weight = fields.DecimalField(max_digits=6, decimal_places=2, description='体重/kg')
-    height = fields.DecimalField(max_digits=6, decimal_places=2, description='身高/cm')
-    blood_type = fields.CharField(max_length=1, description='血型0A1B2AB3O')
+    address = fields.CharField(max_length=256, description='居住地', null=True)
+    weight = fields.DecimalField(max_digits=6, decimal_places=2, description='体重/kg', null=True)
+    height = fields.DecimalField(max_digits=6, decimal_places=2, description='身高/cm', null=True)
+    blood_type = fields.CharField(max_length=1, description='血型0A1B2AB3O', null=True)
 
     user_id = fields.ForeignKeyField('models.Users', related_name='find_user_bind_physic')
 

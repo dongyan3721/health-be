@@ -10,11 +10,11 @@ from starlette.requests import Request
 from tortoise.contrib.pydantic import pydantic_model_creator, pydantic_queryset_creator
 
 from app.entity.form import UserModifyDependency, UserIntakeDependency
-from app.entity.raw import UserEntity, UserPasswordModifyEntity, UserMedicineHistoryEntity
+from app.entity.raw import UserEntity, UserPasswordModifyEntity, UserMedicineHistoryEntity, UserPhysicalEntity
 from app.framework.config.FileConfig import *
 from app.framework.net.HttpMessages import AjaxResult, TableData
 from app.framework.net.HttpStatus import HttpStatus
-from app.model.models import Users, UserTags, UserUploadedInTake, UserMedicineHistory
+from app.model.models import Users, UserTags, UserUploadedInTake, UserMedicineHistory, UserPhysical
 from app.utils.JwtUtils import JwtUtils
 from app.utils.cryptor.RSAUtil import RSAUtil
 from app.utils.ipUtils import get_ip_info_async
@@ -155,7 +155,7 @@ async def addUserMedicineHistory(record: UserMedicineHistoryEntity):
 # 用户用药史-列表查 // 测试完成
 @user_router.get('/user-medicine/list/{user_id_id}')
 async def queryUserMedicineList(user_id_id: int, skip: int = 0, limit: int = 10):
-    user_medicine_queryset_instance = pydantic_queryset_creator(UserMedicineHistory, exclude=('user_id', ))
+    user_medicine_queryset_instance = pydantic_queryset_creator(UserMedicineHistory, exclude=('user_id',))
     medicine_history_list = await user_medicine_queryset_instance.from_queryset(
         UserMedicineHistory.filter(user_id=user_id_id).offset(skip * limit).limit(limit))
     return TableData.success(medicine_history_list.model_dump(), len(medicine_history_list.model_dump()))
@@ -181,5 +181,34 @@ async def deleteUserMedicine(medicine_id: int):
     return AjaxResult.error('删除失败！')
 
 
+# 用户生理状况 // 只能单个查 -测试完成
+@user_router.get('/user-physics/{user_id}')
+async def getUserPhysicalById(user_id: int):
+    physical: UserPhysical = await UserPhysical.filter(user_id=user_id).first()
+    return AjaxResult.ok_extended(data=physical) if physical else AjaxResult.error('用户记录不存在！')
 
 
+# 用户生理状况 // 新增，这接口基本不用 --测试完成
+# TODO 用户注册时候自动在这个库里面把id加上
+@user_router.post('/user-physics/add')
+async def addUserPhysical(physical: UserPhysicalEntity):
+    args = physical.model_dump(exclude_unset=True)
+    result = await UserPhysical.filter(user_id=physical.user_id_id).first()
+    print(result)
+    if result:
+        return AjaxResult.error('禁止重复上传！')
+    await UserPhysical.create(**args)
+    return AjaxResult.ok()
+
+
+# 用户生理状况-修改 --测试完成
+@user_router.put('/user-physics/modify')
+async def modifyUserPhysical(physical: UserPhysicalEntity):
+    args = physical.model_dump(exclude_unset=True)
+    if not args.get('id'):
+        return AjaxResult.error('id不存在！')
+    if await UserPhysical.filter(id=args.pop('id')).update(**args):
+        return AjaxResult.ok()
+    return AjaxResult.error('修改失败！')
+
+# 生理状况填了就不给删除了
