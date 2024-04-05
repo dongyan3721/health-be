@@ -56,6 +56,8 @@ class Users(SnowFlakeIDModel):
     find_user_bind_medicine_history: fields.ReverseRelation["UserMedicineHistory"]
     # 用户上传摄入量反向查找
     find_user_bind_uploaded_intake: fields.ReverseRelation["UserUploadedInTake"]
+    # 用户体检数据反向查找
+    find_user_bind_physical_examination: fields.ReverseRelation["UserPhysicalExamination"]
 
     class Meta:
         table = "b_user"
@@ -145,13 +147,30 @@ class HospitalDoctors(UUIDModel):
 
 
 # 静态表-体检数据正常值
-# class StaticPhysicalExaminationNormValue(UUIDModel):
-#     pass
+class StaticRecommendedPerform(SnowFlakeIDModel):
+    exam_item = fields.CharField(max_length=255, description='体检项目名称', null=False)
+    exam_recommended_perform = fields.DecimalField(max_digits=10, decimal_places=2, description='数据表现', null=False)
+    exam_metric = fields.CharField(max_length=32, description='数据单位', null=False)
+    find_bind_exam_users: fields.ReverseRelation["UserPhysicalExamination"]
+
+    class Meta:
+        table = "b_static_recommended_perform"
 
 
 # 用户体检数据表
-# class UserPhysicalExamination(SnowFlakeIDModel):
-#     pass
+class UserPhysicalExamination(SnowFlakeIDModel):
+    exam_item = fields.CharField(max_length=255, description='体检项目名称', null=False)
+    exam_perform = fields.DecimalField(max_digits=10, decimal_places=2, description='数据表现', null=False)
+    exam_metric = fields.CharField(max_length=32, description='数据单位', null=False)
+    exam_recommended_perform = fields.DecimalField(max_digits=10, decimal_places=2, description='正常数据表现', null=False)
+
+    exam_standard = fields.ForeignKeyField("models.StaticRecommendedPerform",
+                                           related_name="find_bind_exam_users")
+
+    user_id = fields.ForeignKeyField('models.Users', related_name='find_user_bind_physical-examination')
+
+    class Meta:
+        table = "b_user_physical_examination"
 
 
 # 静态表-膳食指南

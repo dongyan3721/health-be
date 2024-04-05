@@ -4,7 +4,6 @@
 @timeSnapshot 2024/2/1-21:57:39
 """
 
-
 # res = [
 #     'KeyValueData',
 #     'UserTags',
@@ -22,38 +21,54 @@
 # for name in res:
 #     print(f"PydanticModel{name}: Type[PydanticModel] = pydantic_model_creator({name})")
 #     print(f"PydanticQuerySet{name}: Type[PydanticListModel] = pydantic_queryset_creator({name})")
+import pprint
+
+import httpx
+
+from app.framework.config.ApplicationProperties import APPLICATION_PROPERTIES
+
+api_key = APPLICATION_PROPERTIES.get("openai-api")
 
 
-def read():
-    ret = {}
-    with open("ratings.dat", "r") as file:
-        for line in file:
-            split = line.split("::")
-            if ret.get(split[0]) is None:
-                ret[split[0]] = []
-            else:
-                ret[split[0]].append(split[1])
-        return ret
+# client = httpx.AsyncClient(proxies='https://127.0.0.1:7890')
 
 
-def calc(data: dict):
-    ret = {}
-    keys = data.keys()
-    for i in keys:
-        for j in keys:
-            if i != j:
-                u1 = set(data[i])
-                u2 = set(data[j])
-                try:
-                    len(ret.get(i))
-                    ret[i].append({
-                        j: len(u1 & u2)
-                    })
-                except:
-                    ret[i] = []
+async def request():
+    url = "https://api.openai.com/v1/chat/completions"
+    headers = {
+        'Content-Type': 'application/json',
+        'Authorization': f'Bearer {api_key}'
+    }
+    params = {
+        'model': 'gpt-3.5-turbo',
+        "messages": [{"role": "user", "content": "Say this is a test!"}],
+        "temperature": 0.7,
+        'n': '1',
+        'max_token': 2000,
+        'stream': False
+    }
+    async with httpx.AsyncClient(proxies='http://127.0.0.1:7890') as client:
+        response = await client.post(url=url, headers=headers, json=params, timeout=30)
+        pprint.pprint(response.json())
 
-    return ret
 
 
 if __name__ == '__main__':
-    print(calc(read()))
+    import asyncio
+
+    asyncio.run(request())
+
+# client = OpenAI(
+#     api_key=api_key
+# )
+#
+# completion = client.chat.completions.create(
+#     model="gpt-3.5-turbo",
+#     messages=[
+#         {"role": "system",
+#          "content": "You are a poetic assistant, skilled in explaining complex programming concepts with creative flair."},
+#         {"role": "user", "content": "Compose a poem that explains the concept of recursion in programming."}
+#     ]
+# )
+#
+# print(completion.choices[0].message)
