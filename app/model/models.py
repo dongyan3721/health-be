@@ -148,7 +148,7 @@ class HospitalDoctors(UUIDModel):
 
 # 静态表-体检数据正常值
 class StaticRecommendedPerform(SnowFlakeIDModel):
-    exam_item = fields.CharField(max_length=255, description='体检项目名称', null=False)
+    exam_item = fields.CharField(max_length=255, description='体检项名称', null=False)
     exam_recommended_perform = fields.DecimalField(max_digits=10, decimal_places=2, description='数据表现', null=False)
     exam_metric = fields.CharField(max_length=32, description='数据单位', null=False)
     find_bind_exam_users: fields.ReverseRelation["UserPhysicalExamination"]
@@ -159,7 +159,7 @@ class StaticRecommendedPerform(SnowFlakeIDModel):
 
 # 用户体检数据表
 class UserPhysicalExamination(SnowFlakeIDModel):
-    exam_item = fields.CharField(max_length=255, description='体检项目名称', null=False)
+    exam_item = fields.CharField(max_length=255, description='体检项名称', null=False)
     exam_perform = fields.DecimalField(max_digits=10, decimal_places=2, description='数据表现', null=False)
     exam_metric = fields.CharField(max_length=32, description='数据单位', null=False)
     exam_recommended_perform = fields.DecimalField(max_digits=10, decimal_places=2, description='正常数据表现', null=False)
