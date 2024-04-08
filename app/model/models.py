@@ -154,7 +154,7 @@ class StaticRecommendedPerform(SnowFlakeIDModel):
     find_bind_exam_users: fields.ReverseRelation["UserPhysicalExamination"]
 
     class Meta:
-        table = "b_static_recommended_perform"
+        table = "b_recommended_perform"
 
 
 # 用户体检数据表
